@@ -116,7 +116,7 @@ jobs:
   trigger-cd-pipeline:
     runs-on: ubuntu-latest
     needs: build-and-scan
-    if: ${{ success() && github.ref == 'refs/heads/main' }}
+    if: ${{ success() && github.ref == 'refs/heads/feature' }}
 
     steps:
       - name: Trigger CD Pipeline
