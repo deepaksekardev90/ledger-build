@@ -35,11 +35,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Verify files
-        run: |
-          echo "Repository successfully checked out"
-          ls -R
-
       # -----------------------------
       # Setup Java
       # -----------------------------
