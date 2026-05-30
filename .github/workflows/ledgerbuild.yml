@@ -105,16 +105,20 @@ jobs:
   # -----------------------------
   # Trigger CD Job
   # -----------------------------
-  trigger-cd-pipeline:
+ trigger-cd-pipeline:
     runs-on: ubuntu-latest
     needs: build-and-scan
-    if: ${{ success() && github.ref == 'refs/heads/feature' }}
+    if: ${{ success() && github.ref == 'refs/heads/main' }}
+
+    # Map variables with safe fallbacks for automation triggers
+    env:
+      FINAL_ECRURL: ${{ inputs.ECRURL || '081654307023.dkr.ecr.ap-south-1.amazonaws.com' }}
+      FINAL_REPO: ${{ inputs.APPREPO || 'wezvatechledger' }}
+      FINAL_IMAGE: rel${{ github.run_number }}
 
     steps:
       - name: Trigger CD Pipeline
         run: |
-          IMAGE_TAG="fb${{ github.run_number }}"
-
           curl -X POST \
           -H "Authorization: Bearer ${{ secrets.GH_PAT }}" \
           -H "Accept: application/vnd.github+json" \
@@ -122,9 +126,9 @@ jobs:
           -d "{
             \"ref\":\"main\",
             \"inputs\": {
-              \"ECRURL\": \"${{ inputs.ECRURL }}/\",
-              \"REPO\": \"${{ inputs.APPREPO }}\",
-              \"IMAGE\": \"$IMAGE_TAG\",
+              \"ECRURL\": \"${{ env.FINAL_ECRURL }}/\",
+              \"REPO\": \"${{ env.FINAL_REPO }}\",
+              \"IMAGE\": \"${{ env.FINAL_IMAGE }}\",
               \"TEST\": \"functional\"
             }
           }"
