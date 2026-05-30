@@ -6,21 +6,21 @@ on:
       - feature
   
   workflow_dispatch:
-   inputs:
-     ECRURL:
-      description: "ECR Registry URL"
-      required: true
-      default: "081654307023.dkr.ecr.ap-south-1.amazonaws.com"
+    inputs:
+      ECRURL:
+        description: "ECR Registry URL"
+        required: true
+        default: "081654307023.dkr.ecr.ap-south-1.amazonaws.com"
 
-     APPREPO:
-      description: "Docker Repo Name"
-      required: true
-      default: "wezvatechledger"
+      APPREPO:
+        description: "Docker Repo Name"
+        required: true
+        default: "wezvatechledger"
 
-     REGION:
-      description: "AWS Region"
-      required: true
-      default: "ap-south-1"  
+      REGION:
+        description: "AWS Region"
+        required: true
+        default: "ap-south-1"  
 
 jobs:
   build-and-scan:
@@ -93,7 +93,7 @@ jobs:
       # ----------------------------- 
       - name: Build and Push Docker Image
         env:
-          ECR_REGISTRY: ${{ inputs.ECRURL || '081654307023.dkr.ecr.ap-south-1.amazonaws.com' }}
+          ECR_REGISTRY: ${{ inputs.ECRURL || '://amazonaws.com' }}
           REPOSITORY: ${{ inputs.APPREPO || 'wezvatechledger' }}
           IMAGE_TAG: fb${{ github.run_number }}
         run: |
@@ -103,17 +103,17 @@ jobs:
           docker push $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG  
 
   # -----------------------------
-  # Trigger CD Job
+  # Trigger CD Job (Fixed Indentation)
   # -----------------------------
- trigger-cd-pipeline:
+  trigger-cd-pipeline:
     runs-on: ubuntu-latest
     needs: build-and-scan
 
-    # Map variables with safe fallbacks for automation triggers
+    # Safely handle automated push events where inputs are blank
     env:
-      FINAL_ECRURL: ${{ inputs.ECRURL || '081654307023.dkr.ecr.ap-south-1.amazonaws.com' }}
+      FINAL_ECRURL: ${{ inputs.ECRURL || '://amazonaws.com' }}
       FINAL_REPO: ${{ inputs.APPREPO || 'wezvatechledger' }}
-      FINAL_IMAGE: rel${{ github.run_number }}
+      FINAL_IMAGE: fb${{ github.run_number }}
 
     steps:
       - name: Trigger CD Pipeline
@@ -121,7 +121,7 @@ jobs:
           curl -X POST \
           -H "Authorization: Bearer ${{ secrets.GH_PAT }}" \
           -H "Accept: application/vnd.github+json" \
-          https://api.github.com/repos/wezva-fintech/ledger-deployment/actions/workflows/deploy.yml/dispatches \
+          https://github.com \
           -d "{
             \"ref\":\"main\",
             \"inputs\": {
