@@ -125,6 +125,6 @@ jobs:
               \"ECRURL\": \"${{ inputs.ECRURL }}/\",
               \"REPO\": \"${{ inputs.APPREPO }}\",
               \"IMAGE\": \"$IMAGE_TAG\",
-              \"TEST\": \"regression\"
+              \"TEST\": \"functional\"
             }
           }"
