@@ -62,10 +62,16 @@ jobs:
         run: cp target/*.jar target/backend_rel${{ github.run_number }}.jar
 
       # -----------------------------
+      # Configure Docker API for Testcontainers
+      # -----------------------------
+      - name: Configure Docker API Version
+        run: echo "api.version=1.44" >> ~/.docker-java.properties
+
+      # -----------------------------
       # Code Coverage Report (JaCoCo)
       # -----------------------------
       - name: Code Coverage Report (JaCoCo)
-        run: mvn clean verify -Ddependency-check.skip=true
+        run: mvn verify -Ddependency-check.skip=true
 
       - name: Upload JaCoCo Report
         uses: actions/upload-artifact@v4
