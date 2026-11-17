@@ -103,9 +103,6 @@ jobs:
           docker push $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG  
 
   # -----------------------------
-  # Trigger CD Job (Fixed Indentation)
-  # -----------------------------
-  # -----------------------------
   # Trigger CD Job
   # -----------------------------
   trigger-cd-pipeline:
@@ -115,11 +112,18 @@ jobs:
     steps:
       - name: Trigger CD Pipeline
         env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
-          ECR_URL: ${{ inputs.ECRURL || '640351538280.dkr.ecr.ap-south-1.amazonaws.com' }}
+          RAW_GH_TOKEN: ${{ secrets.GH_PAT }}
+          ECR_URL: ${{ inputs.ECRURL || '://amazonaws.com' }}
           APP_REPO: ${{ inputs.APPREPO || 'wezvatechledger' }}
           IMAGE_TAG: fb${{ github.run_number }}
         run: |
+          export GH_TOKEN=$(printf '%s' "$RAW_GH_TOKEN" | tr -d '\r\n ')
+
+          if [ -z "$GH_TOKEN" ]; then
+            echo "Error: GH_PAT secret is empty or not set."
+            exit 1
+          fi
+
           gh workflow run deploy.yml \
             --repo wezva-fintech/ledger-deployment \
             --ref main \
@@ -127,5 +131,6 @@ jobs:
             -f REPO="$APP_REPO" \
             -f IMAGE="$IMAGE_TAG" \
             -f TEST="functional"
+
 
 
