@@ -10,7 +10,7 @@ on:
       ECRURL:
         description: "ECR Registry URL"
         required: true
-        default: "640351538280.dkr.ecr.ap-south-1.amazonaws.com"
+        default: "010526266515.dkr.ecr.ap-south-1.amazonaws.com/wezvatechledger"
 
       APPREPO:
         description: "Docker Repo Name"
